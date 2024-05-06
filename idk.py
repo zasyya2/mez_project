@@ -44,4 +44,4 @@ def get_class(model_path="Path to model", labels_path="Path to labels", image_pa
     #print("Confidence Score:", confidence_score)
     return class_name[2:], confidence_score
 
-get_class("keras_model.h5","labels.txt","img\gw.PNG")
+print(get_class("keras_model.h5","labels.txt","img\gw.PNG"))

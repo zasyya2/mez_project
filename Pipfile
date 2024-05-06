@@ -8,10 +8,10 @@ flask = "*"
 fastapi = "*"
 discord = "*"
 "discord.py" = "*"
-keras = "*"
 uvicorn = "*"
-tensorflow = "*"
 pillow = "*"
+tensorflow = ">=2.8.0,<2.9.0"
+keras = ">=2.8.0,<2.9.0"
 
 [dev-packages]
 

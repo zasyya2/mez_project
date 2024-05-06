@@ -1,75 +1,71 @@
-import discord
-import time
-from discord.ext import commands
-from bot_token import bottoken
-from idk import get_class
-import requests
-
-intents = discord.Intents.default()
-
-intents.message_content = True
-
-bot = commands.Bot(command_prefix='/', intents=intents)
+# İçeri Aktarma
+from flask import Flask, render_template,request, redirect
+# Veritabanı kütüphanesini içe aktarma
+from flask_sqlalchemy import SQLAlchemy
 
 
-@bot.event
-async def on_ready():
-    print(f'{bot.user} olarak giriş yaptık')
+app = Flask(__name__)
+# SQLite ile bağlantı kurma 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///diary.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# DB oluşturma
+db = SQLAlchemy(app )
 
-@bot.command()
-async def hello(ctx):
-    await ctx.send(f'Merhaba {bot.user}! Ben bir botum!')
+#Görev #1. DB tablosu oluşturma
 
-@bot.command()
-async def chat(ctx):
-    await ctx.send(f'Merhaba! Ne hakkında konuşalım?')
 
-@bot.command()
-async def bored(ctx):
-    await ctx.send(f'Ooo. Ne konuşalım?')
 
-@bot.command()
-async def nofriends(ctx):
-    await ctx.send(f'Ooo. Ne konuşalım?!')
+
+
+
+
+
+
+
+
+# İçerik sayfasını çalıştırma
+@app.route('/')
+def index():
+    # DB nesnelerini görüntüleme
+    # Görev #2. DB'deki nesneleri index.html'de görüntüleme
     
-@bot.command()
-async def anime(ctx):
-    await ctx.send(f'ooo')
-    time.sleep (1)
-    await ctx.send(f'Bende öyle bir bilgi yok x-x')
-    time.sleep (1)
-    await ctx.send(f'Ama minecraft konuşabiliriz!')
 
-def get_duck_image_url():    
-    url = 'https://random-d.uk/api/random'
-    res = requests.get(url)
-    data = res.json()
-    return data['url']
+    return render_template('index.html',
+                           #kartlar = kartlar
+
+                           )
+
+# Kartla sayfayı çalıştırma
+@app.route('/card/<int:id>')
+def card(id):
+    # Görev #2. Id'ye göre doğru kartı görüntüleme
+    
+
+    return render_template('card.html', card=card)
+
+# Sayfayı çalıştırma ve kart oluşturma
+@app.route('/create')
+def create():
+    return render_template('create_card.html')
+
+# Kart formu
+@app.route('/form_create', methods=['GET','POST'])
+def form_create():
+    if request.method == 'POST':
+        title =  request.form['title']
+        subtitle =  request.form['subtitle']
+        text =  request.form['text']
+
+        # Görev #2. Verileri DB'de depolamak için bir yol oluşturma
+        
 
 
-@bot.command('duck')
-async def duck(ctx):
-    '''duck komutunu çağırdığımızda, program ordek_resmi_urlsi_al fonksiyonunu çağırır.'''
-    image_url = get_duck_image_url()
-    await ctx.send(image_url)
 
 
-@bot.command()
-async def detect (ctx):
-    if ctx.message.attachments:
-        for attachment in ctx.message.attachments:
-            file_name=attachment.filename
-            url = attachment.url
-            image_path = "/images" + file_name
- 
-            await attachment.save(image_path)
-            await ctx.send ("Resim Kaydedildi!")
-            class_name, score = get_class("keras_model.h5", "labels.txt", image_path)
-            await ctx.sen(f'It is a ', class_name, 'fanart!')
+        return redirect('/')
     else:
-        await ctx.send(f'no file found')
-
-    await ctx.send(f'..')
+        return render_template('create_card.html')
 
 
-bot.run(bottoken)
+if __name__ == "__main__":
+    app.run(debug=True)
